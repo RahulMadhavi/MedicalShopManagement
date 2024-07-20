@@ -67,6 +67,9 @@ class VerifyEmailView(APIView):
         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
             return Response({"message": "Invalid link."}, status=status.HTTP_400_BAD_REQUEST)
 
+        if user.profile.email_verified:
+            return Response({"message": "Email already verified."}, status=status.HTTP_400_BAD_REQUEST)
+
         if default_token_generator.check_token(user, token):
             user.is_active = True
             user.profile.email_verified = True
